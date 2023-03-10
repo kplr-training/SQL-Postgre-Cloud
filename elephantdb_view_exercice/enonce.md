@@ -100,7 +100,7 @@ HAVING total_spent > 1000;
 SELECT * FROM HighSpendingCustomers;
 ```
 
-6.Créez une vue appelée **TopSellingProducts** qui affiche le produit et le nombre de fois où il a été vendu, trié par ordre décroissant du nombre de fois où chaque produit a été vendu.
+6. Créez une vue appelée **TopSellingProducts** qui affiche le produit et le nombre de fois où il a été vendu, trié par ordre décroissant du nombre de fois où chaque produit a été vendu.
 ```sql
 CREATE VIEW TopSellingProducts AS
 SELECT product, COUNT(id) AS num_sold
