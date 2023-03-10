@@ -3,10 +3,10 @@
 1. Compléter le code suivant pour qu'il crée les tables **Customers** et **Orders** :
 
 ```sql
--- Create exoview database if it does not exist
+-- Créer la base de données exoview
 CREATE DATABASE IF NOT EXISTS exoview;
 
--- Use exoview database
+-- Utiliser la base de donnée exoview
 USE exoview;
 
 -- Create Customers table
@@ -17,7 +17,7 @@ CREATE TABLE Customers (
   city VARCHAR(50)
 );
 
--- Insert data into Customers table
+-- Insérer les données dans la table Customers
 INSERT INTO Customers (id, name, email, city) VALUES
 (1, 'John', 'john@gmail.com', 'New York'),
 (2, 'Sara', 'sara@gmail.com', 'Paris'),
@@ -25,7 +25,7 @@ INSERT INTO Customers (id, name, email, city) VALUES
 (4, 'Jane', 'jane@gmail.com', 'Berlin'),
 (5, 'Mike', 'mike@gmail.com', 'Madrid');
 
--- Create Orders table
+-- Créer la table Orders
 CREATE TABLE Orders (
   id INT PRIMARY KEY,
   customer_id INT,
@@ -33,7 +33,7 @@ CREATE TABLE Orders (
   price INT
 );
 
--- Insert data into Orders table
+-- Insérer les données dans la table Orders
 INSERT INTO Orders (id, customer_id, product, price) VALUES
 (1, 1, 'TV', 1000),
 (2, 2, 'Phone', 500),
