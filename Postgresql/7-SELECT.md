@@ -4,7 +4,7 @@
 
 
 6.1. Récupérer tous les enregistrements de la table **employees**
-
+  
 6.2. Récupérez tous les enregistrements de la table **departments**
 
 6.3. Récupérez tous les enregistrements de la table **dept_emp**
