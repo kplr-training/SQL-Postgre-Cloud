@@ -87,7 +87,7 @@ SELECT c.name, c.email, SUM(o.price) AS total_spent
 FROM Customers c
 JOIN Orders o ON c.id = o.customer_id
 GROUP BY c.id
-HAVING total_spent > 1000;
+HAVING SUM(o.price) > 1000;
 ```
 
 5. Récupérer toutes les lignes de la vue **HighSpendingCustomers**.
