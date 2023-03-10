@@ -122,10 +122,13 @@ GROUP BY c.city;
 SELECT * FROM OrdersByCity;
 ```
 
-10. Créez une vue appelée **AverageOrderValue** qui affiche la valeur moyenne des commandes pour chaque client.
+10. Créez une vue appelée **AverageOrderValue** qui affiche la valeur moyenne des commandes pour chaque client. (indice : utiliser inner join)
 ```sql
 CREATE VIEW AverageOrderValue AS
-SELECT c.name, AVG(o.price)
+SELECT c.name, AVG(o.price) AS avg_order_value
+FROM customers c
+INNER JOIN orders o ON c.customer_id = o.customer_id
+GROUP BY c.customer_id, c.name;
 ```
 
 11. Récupérer toutes les lignes de la vue **AverageOrderValue**.
