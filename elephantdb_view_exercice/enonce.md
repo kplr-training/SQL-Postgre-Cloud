@@ -1,4 +1,4 @@
-# VIEW - Exercice
+# VIEW - Solution
 
 1. Compléter le code suivant pour qu'il crée les tables **Customers** et **Orders** :
 
