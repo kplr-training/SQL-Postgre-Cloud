@@ -3,12 +3,6 @@
 1. Compléter le code suivant pour qu'il crée les tables **Customers** et **Orders** :
 
 ```sql
--- Créer la base de données exoview
-CREATE DATABASE IF NOT EXISTS exoview;
-
--- Utiliser la base de donnée exoview
-USE exoview;
-
 -- Créer la table Customers
 CREATE TABLE Customers (
 -- Remplir ici
