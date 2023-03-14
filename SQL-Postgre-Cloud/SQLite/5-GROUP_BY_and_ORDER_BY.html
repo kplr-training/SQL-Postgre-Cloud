@@ -1,0 +1,96 @@
+<h1>4.GROUP BY and ORDER BY</h1>
+<h3>4.1: Getting a count of records</h3>
+<p><code>sql
+SELECT count(*) as record_count FROM station_data</code></p>
+<h3>4.2 Getting a count of records with a condition</h3>
+<p><code>sql
+SELECT count(*) as record_count FROM station_data
+WHERE tornado = 1</code></p>
+<h3>4.3 Getting a count by year</h3>
+<p><code>sql
+SELECT year, count(*) as record_count
+FROM station_data
+WHERE tornado = 1
+GROUP BY year</code></p>
+<h3>4.4 Getting a count by year, month</h3>
+<p><code>sql
+SELECT year, month, count(*) as record_count
+FROM station_data
+WHERE tornado = 1
+GROUP BY year, month</code></p>
+<h3>4.5 Getting a count by year, month with ordinal index</h3>
+<p><code>sql
+SELECT year, month, count(*) as record_count
+FROM station_data
+WHERE tornado = 1
+GROUP BY 1, 2</code></p>
+<h3>4.6 Using ORDER BY</h3>
+<p><code>sql
+SELECT year, month, count(*) as record_count
+FROM station_data
+WHERE tornado = 1
+GROUP BY year, month
+ORDER BY year, month</code></p>
+<h3>4.7 Using ORDER BY with DESC</h3>
+<p><code>sql
+SELECT year, month, count(*) as record_count
+FROM station_data
+WHERE tornado = 1
+GROUP BY year, month
+ORDER BY year DESC, month</code></p>
+<h3>4.8 Counting non-null values</h3>
+<p><code>sql
+SELECT COUNT(snow_depth) as recorded_snow_depth_count
+FROM station_data</code></p>
+<h3>4.9 Average temperature by month since year 2000</h3>
+<p><code>sql
+SELECT month, AVG(temperature) as avg_temp
+FROM station_data
+WHERE year &gt;= 2000
+GROUP BY month</code></p>
+<h3>4.10 Average temperature (with rounding) by month since year 2000</h3>
+<p><code>sql
+SELECT month, round(AVG(temperature),2) as avg_temp
+FROM station_data
+WHERE year &gt;= 2000
+GROUP BY month</code></p>
+<h3>4.11 Sum of snow depth</h3>
+<p><code>sql
+SELECT year, SUM(snow_depth) as total_snow
+FROM station_data
+WHERE year &gt;= 2005
+GROUP BY year</code></p>
+<h3>4.12 Multiple aggregations</h3>
+<p>```sql
+SELECT year,
+SUM(snow_depth) as total_snow,
+SUM(precipitation) as total_precipitation,
+MAX(precipitation) as max_precipitation</p>
+<p>FROM station_data
+WHERE year &gt;= 2005
+GROUP BY year
+```</p>
+<h3>EXERCISES</h3>
+<p>Flip to slides</p>
+<h3>4.13 Using HAVING</h3>
+<p>You cannot use WHERE on aggregations. This will result in an error.</p>
+<p><code>sql
+SELECT year,
+SUM(precipitation) as total_precipitation
+FROM station_data
+WHERE total_precipitation &gt; 30
+GROUP BY year</code></p>
+<p>You can however, use HAVING.</p>
+<p><code>sql
+SELECT year,
+SUM(precipitation) as total_precipitation
+FROM station_data
+GROUP BY year
+HAVING total_precipitation &gt; 30</code></p>
+<h3>4.14 Getting Distinct values</h3>
+<p>You can get DISTINCT values for one or more columns</p>
+<p><code>sql
+SELECT DISTINCT station_number FROM station_data</code></p>
+<p>You can also get distinct combinations of values for multiple columns</p>
+<p><code>sql
+SELECT DISTINCT station_number, year FROM station_data</code></p>
