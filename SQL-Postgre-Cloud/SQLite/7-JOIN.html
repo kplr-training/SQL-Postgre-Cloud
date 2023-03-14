@@ -1,0 +1,159 @@
+<h1>Dans cette partie nous allons travailler avec la base de données :  rexon_metals.db</h1>
+<ul>
+<li>
+<h3>Sélectionner la base de donnée  rexon_metals.db sur BDHub.io .</h3>
+</li>
+<li>
+<h3>Double cliquer sur rexon_metals.db</h3>
+</li>
+</ul>
+<p><img alt="a" src="https://user-images.githubusercontent.com/78825764/213727063-7b9f18d9-f159-4962-b1cb-c596a115594a.jpg" /></p>
+<ul>
+<li>
+<h3>Go to visualise</h3>
+</li>
+</ul>
+<h1>JOIN</h1>
+<h3>6.1A INNER JOIN</h3>
+<p>(Refer to slides Section VII)</p>
+<p>View customer address information with each order by joining tables <code>CUSTOMER</code> and <code>CUSTOMER_ORDER</code>.</p>
+<p>```sql
+SELECT ORDER_ID,
+CUSTOMER.CUSTOMER_ID,
+ORDER_DATE,
+SHIP_DATE,
+NAME,
+STREET_ADDRESS,
+CITY,
+STATE,
+ZIP,
+PRODUCT_ID,
+ORDER_QTY</p>
+<p>FROM CUSTOMER INNER JOIN CUSTOMER_ORDER
+ON CUSTOMER.CUSTOMER_ID = CUSTOMER_ORDER.CUSTOMER_ID
+```</p>
+<p>Joins allow us to keep stored data normalized and simple, but we can get more descriptive views of our data by using joins.</p>
+<p>Notice how two customers are omitted since they don't have any orders (refer to slides).</p>
+<h3>6.2B A BAD APPROACH</h3>
+<p>You may come across a style of joining where commas are used to select the needed tables, and a <code>WHERE</code> defines the join condition as shown below:</p>
+<p>```sql
+SELECT ORDER_ID,
+CUSTOMER.CUSTOMER_ID,
+ORDER_DATE,
+SHIP_DATE,
+NAME,
+STREET_ADDRESS,
+CITY,
+STATE,
+ZIP,
+PRODUCT_ID,
+ORDER_QTY</p>
+<p>FROM CUSTOMER, CUSTOMER_ORDER
+WHERE CUSTOMER.CUSTOMER_ID = CUSTOMER_ORDER.CUSTOMER_ID
+```</p>
+<p>Do not use this approach no matter how much your colleagues use it (and educate them not to use it either). It is extremely inefficient as it will generate a cartesian product across both tables (every possible combination of records between both), and then filter it based on the WHERE. It does not work with <code>LEFT JOIN</code> either, which we will look at shortly.</p>
+<p>Using the <code>INNER JOIN</code> with an <code>ON</code> condition avoids the cartesian product and is more efficient. Therefore, always use that approach.</p>
+<h3>6.2 LEFT OUTER JOIN</h3>
+<p>To include all customers, regardless of whether they have orders, you can use a left outer join via <code>LEFT JOIN</code> (refer to slides).</p>
+<p>If any customers do not have any orders, they will get one record where the <code>CUSTOMER_ORDER</code> fields will be null.</p>
+<p>```sql
+SELECT CUSTOMER.CUSTOMER_ID,
+NAME,
+STREET_ADDRESS,
+CITY,
+STATE,
+ZIP,
+ORDER_DATE,
+SHIP_DATE,
+ORDER_ID,
+PRODUCT_ID,
+ORDER_QTY</p>
+<p>FROM CUSTOMER LEFT JOIN CUSTOMER_ORDER
+ON CUSTOMER.CUSTOMER_ID = CUSTOMER_ORDER.CUSTOMER_ID
+```</p>
+<h2>6.3 Finding Customers with No Orders</h2>
+<p>With a left outer join, you can filter for NULL values on the <code>CUSTOMER_ORDER</code> table to find customers that have no orders.</p>
+<p>```sql
+SELECT CUSTOMER.CUSTOMER_ID,
+NAME AS CUSTOMER_NAME</p>
+<p>FROM CUSTOMER LEFT JOIN CUSTOMER_ORDER
+ON CUSTOMER.CUSTOMER_ID = CUSTOMER_ORDER.CUSTOMER_ID</p>
+<p>WHERE ORDER_ID IS NULL
+```</p>
+<p>You can use a left outer join to find child records with no parent, or parent records with no children (e.g. a <code>CUSTOMER_ORDER</code> with no <code>CUSTOMER</code>, or a <code>CUSTOMER</code> with no <code>CUSTOMER_ORDER</code>s).</p>
+<h2>6.4 Joining Multiple Tables</h2>
+<p>Bring in <code>PRODUCT</code> to supply product information for each <code>CUSTOMER_ORDER</code>, on top of <code>CUSTOMER</code> information.</p>
+<p>```sql
+SELECT ORDER_ID,
+CUSTOMER.CUSTOMER_ID,
+NAME AS CUSTOMER_NAME,
+STREET_ADDRESS,
+CITY,
+STATE,
+ZIP,
+ORDER_DATE,
+PRODUCT.PRODUCT_ID,
+DESCRIPTION,
+ORDER_QTY</p>
+<p>FROM CUSTOMER INNER JOIN CUSTOMER_ORDER
+ON CUSTOMER.CUSTOMER_ID = CUSTOMER_ORDER.CUSTOMER_ID</p>
+<p>INNER JOIN PRODUCT
+ON CUSTOMER_ORDER.PRODUCT_ID = PRODUCT.PRODUCT_ID
+```</p>
+<h2>6.7 Using Expressions with JOINs</h2>
+<p>You can use expressions combining any fields on any of the joined tables. For instance, we can now get the total revenue for each customer.</p>
+<p>```sql
+SELECT ORDER_ID,
+CUSTOMER.CUSTOMER_ID,
+NAME AS CUSTOMER_NAME,
+STREET_ADDRESS,
+CITY,
+STATE,
+ZIP,
+ORDER_DATE,
+PRODUCT.PRODUCT_ID,
+DESCRIPTION,
+ORDER_QTY,
+ORDER_QTY * PRICE as REVENUE</p>
+<p>FROM CUSTOMER INNER JOIN CUSTOMER_ORDER
+ON CUSTOMER.CUSTOMER_ID = CUSTOMER_ORDER.CUSTOMER_ID</p>
+<p>INNER JOIN PRODUCT
+ON CUSTOMER_ORDER.PRODUCT_ID = PRODUCT.PRODUCT_ID
+```</p>
+<h2>6.6 Using GROUP BY with JOINs</h2>
+<p>You can use <code>GROUP BY</code> with a join. For instance, you can find the total revenue for each customer by leveraging all three joined tables, and aggregating the <code>REVENUE</code> expression we created earlier.</p>
+<p>```sql
+SELECT
+CUSTOMER.CUSTOMER_ID,
+NAME AS CUSTOMER_NAME,
+sum(ORDER_QTY * PRICE) as TOTAL_REVENUE</p>
+<p>FROM CUSTOMER INNER JOIN CUSTOMER_ORDER
+ON CUSTOMER.CUSTOMER_ID = CUSTOMER_ORDER.CUSTOMER_ID</p>
+<p>INNER JOIN PRODUCT
+ON CUSTOMER_ORDER.PRODUCT_ID = PRODUCT.PRODUCT_ID</p>
+<p>GROUP BY 1,2
+```</p>
+<p>To see all customers even if they had no orders, use a <code>LEFT JOIN</code></p>
+<p>```sql
+SELECT
+CUSTOMER.CUSTOMER_ID,
+NAME AS CUSTOMER_NAME,
+sum(ORDER_QTY * PRICE) as TOTAL_REVENUE</p>
+<p>FROM CUSTOMER LEFT JOIN CUSTOMER_ORDER
+ON CUSTOMER.CUSTOMER_ID = CUSTOMER_ORDER.CUSTOMER_ID</p>
+<p>LEFT JOIN PRODUCT
+ON CUSTOMER_ORDER.PRODUCT_ID = PRODUCT.PRODUCT_ID</p>
+<p>GROUP BY 1,2
+```</p>
+<p>You can also use a <code>coalesce()</code> function to turn null sums into zeros.</p>
+<p>```sql
+SELECT
+CUSTOMER.CUSTOMER_ID,
+NAME AS CUSTOMER_NAME,
+coalesce(sum(ORDER_QTY * PRICE), 0) as TOTAL_REVENUE</p>
+<p>FROM CUSTOMER LEFT JOIN CUSTOMER_ORDER
+ON CUSTOMER.CUSTOMER_ID = CUSTOMER_ORDER.CUSTOMER_ID</p>
+<p>LEFT JOIN PRODUCT
+ON CUSTOMER_ORDER.PRODUCT_ID = PRODUCT.PRODUCT_ID</p>
+<p>GROUP BY 1,2
+```</p>
