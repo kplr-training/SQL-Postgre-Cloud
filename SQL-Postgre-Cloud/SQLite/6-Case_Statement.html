@@ -1,0 +1,144 @@
+<h1>CASE Statements</h1>
+<h3>5.1 Categorizing Wind Speed</h3>
+<p>You can use a <code>CASE</code> statement to turn a column value into another value based on conditions. For instance, we can turn different <code>wind_speed</code> ranges into <code>HIGH</code>, <code>MODERATE</code>, and <code>LOW</code> categories.</p>
+<p>```sql
+SELECT report_code, year, month, day, wind_speed,</p>
+<p>CASE
+   WHEN wind_speed &gt;= 40 THEN 'HIGH'
+   WHEN wind_speed &gt;= 30 THEN 'MODERATE'
+   WHEN wind_speed &gt;= 0 THEN 'LOW'
+   ELSE 'N/A'
+END as wind_severity</p>
+<p>FROM station_data
+ORDER by wind_speed DESC;
+```</p>
+<h3>5.2 More Efficient Way To Categorize Wind Speed</h3>
+<p>We can actually omit <code>AND wind_speed &lt; 40</code> from the previous example because each <code>WHEN</code>/<code>THEN</code> is evaluated from top-to-bottom. The first one it finds to be true is the one it will go with, and stop evaluating subsequent conditions.</p>
+<p>```sql
+SELECT report_code, year, month, day, wind_speed,</p>
+<p>CASE
+   WHEN wind_speed &gt;= 40 THEN 'HIGH'
+   WHEN wind_speed &gt;= 30 THEN 'MODERATE'
+   ELSE 'LOW'
+END as wind_severity</p>
+<p>FROM station_data
+```</p>
+<h3>5.3 Using CASE with GROUP BY</h3>
+<p>We can use <code>GROUP BY</code> in conjunction with a <code>CASE</code> statement to slice data in more ways, such as getting the record count by <code>wind_severity</code>.</p>
+<p>```sql
+SELECT </p>
+<p>CASE
+   WHEN wind_speed &gt;= 40 THEN 'HIGH'
+   WHEN wind_speed &gt;= 30 THEN 'MODERATE'
+   WHEN wind_speed &gt;= 0 THEN 'LOW'
+   ELSE 'N/A'
+END AS wind_severity,
+COUNT(*)  AS record_count
+FROM station_data
+GROUP BY wind_severity;
+```</p>
+<p>Also, some wind_speed values are NULL, so without an <code>ELSE</code> any records that do not meet a condition will turn out to be NULL. </p>
+<p>```sql 
+SELECT </p>
+<p>CASE
+   WHEN wind_speed &gt;= 40 THEN 'HIGH'
+   WHEN wind_speed &gt;= 30 THEN 'MODERATE'
+   WHEN wind_speed &gt;= 0 THEN 'LOW'</p>
+<p>END AS wind_severity,
+COUNT(*)  AS record_count
+FROM station_data
+GROUP BY wind_severity;
+```</p>
+<h3>5.4 "Zero/Null" Case Trick</h3>
+<p>There is really no way to create multiple aggregations with different conditions unless you know a trick with the <code>CASE</code> statement. If you want to find two total precipitation, with and without tornado precipitations, for each year and month, you have to do separate queries.</p>
+<p><strong>Tornado Precipitation</strong>
+<code>sql
+SELECT year, month,
+SUM(precipitation) as tornado_precipitation
+FROM station_data
+WHERE tornado = 1
+AND year &gt;= 1990
+GROUP BY year, month</code></p>
+<p><strong>Non-Tornado Precipitation</strong>
+<code>sql
+SELECT year, month,
+SUM(precipitation) as non_tornado_precipitation
+FROM station_data
+WHERE tornado =0
+AND year &gt;= 1990
+GROUP BY year, month</code></p>
+<p>But you can use a single query using a <code>CASE</code> statement that sets a value to 0 if the condition is not met. That way it will not impact the sum.</p>
+<p>```sql
+SELECT year, month,
+SUM(CASE WHEN tornado = 1 THEN precipitation ELSE 0 END) as tornado_precipitation,
+SUM(CASE WHEN tornado = 0 THEN precipitation ELSE 0 END) as non_tornado_precipitation</p>
+<p>FROM station_data
+WHERE year &gt;= 1990</p>
+<p>GROUP BY year, month
+```</p>
+<p>Many folks who are not aware of the zero/null case trick will resort to derived tables (not covered in this class but covered in <em>Advanced SQL for Data Analysis</em>), which adds an unnecessary amount of effort and mess.</p>
+<p>```sql
+SELECT t.year,
+t.month,
+t.tornado_precipitation,
+non_t.non_tornado_precipitation</p>
+<p>FROM (
+    SELECT year, month,
+    SUM(precipitation) as tornado_precipitation
+    FROM station_data
+    WHERE tornado =1
+    AND year &gt;= 1990
+    GROUP BY year, month
+) t</p>
+<p>INNER JOIN</p>
+<p>(   SELECT year, month,
+    SUM(precipitation) as non_tornado_precipitation
+    FROM station_data
+    WHERE tornado =0
+    AND year &gt;= 1990
+    GROUP BY year, month
+) non_t
+```</p>
+<h3>5.5 Using Null in a CASE to conditionalize MIN/MAX</h3>
+<p>Since <code>NULL</code> is ignored in SUM, MIN, MAX, and other aggregate functions, you can use it in a <code>CASE</code> statement to conditionally control whether or not a value should be included in that aggregation.</p>
+<p>For instance, we can split up max precipitation when a tornado was present vs not present.</p>
+<p><code>sql
+SELECT year,
+MAX(CASE WHEN tornado = 0 THEN precipitation ELSE NULL END) as max_non_tornado_precipitation,
+MAX(CASE WHEN tornado = 1 THEN precipitation ELSE NULL END) as max_tornado_precipitation
+FROM station_data
+WHERE year &gt;= 1990
+GROUP BY year</code></p>
+<p><em>Switch to slides for exercise</em></p>
+<h3>Exercise 5.1</h3>
+<p>SELECT  the report_code, year, quarter, and temperature, where a “quarter” is “Q1”, “Q2”, “Q3”, or “Q4” reflecting months 1-3, 4-6, 7-9, and 10-12 respectively.</p>
+<p><strong>ANSWER:</strong></p>
+<p>```sql
+SELECT</p>
+<p>report_code,
+year,</p>
+<p>CASE
+    WHEN month BETWEEN 1 and 3 THEN 'Q1'
+    WHEN month BETWEEN 4 and 6 THEN 'Q2'
+    WHEN month BETWEEN 7 and 9 THEN 'Q3'
+    WHEN month BETWEEN 10 and 12 THEN 'Q4'
+END as quarter,</p>
+<p>temperature</p>
+<p>FROM STATION_DATA
+```</p>
+<h3>Exercise 5.2</h3>
+<p>Get the average temperature by quarter and month, where a “quarter” is “Q1”, “Q2”, “Q3”, or “Q4” reflecting months 1-3, 4-6, 7-9, and 10-12 respectively.</p>
+<p><strong>ANSWER</strong></p>
+<p>```sql
+SELECT
+year,</p>
+<p>CASE
+    WHEN month BETWEEN 1 and 3 THEN 'Q1'
+    WHEN month BETWEEN 4 and 6 THEN 'Q2'
+    WHEN month BETWEEN 7 and 9 THEN 'Q3'
+    WHEN month BETWEEN 10 and 12 THEN 'Q4'
+END as quarter,</p>
+<p>AVG(temperature) as avg_temp</p>
+<p>FROM STATION_DATA
+GROUP BY 1,2
+```</p>
