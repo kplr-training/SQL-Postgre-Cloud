@@ -1,0 +1,99 @@
+<h1>Dans cette partie nous allons travailler avec la base de données :  rexon_metals.db</h1>
+<ul>
+<li>
+<h3>Sélectionner la base de donnée  rexon_metals.db sur BDHub.io .</h3>
+</li>
+<li>
+<h3>Double cliquer sur rexon_metals.db</h3>
+</li>
+</ul>
+<p><img alt="a" src="https://user-images.githubusercontent.com/78825764/213727063-7b9f18d9-f159-4962-b1cb-c596a115594a.jpg" /></p>
+<ul>
+<li>
+<h3>Vous pouvez ici voir les différents table dans la base de donnée rexon_metals.db</h3>
+</li>
+</ul>
+<p><img alt="a" src="https://user-images.githubusercontent.com/78825764/213727208-c25a509d-9701-4241-b963-eff0953dbcf0.jpg" /></p>
+<ul>
+<li>
+<h3>Maintenant , pour pouvoir écrire et éxecuter des requetes sqlite aller sur visualise :</h3>
+</li>
+</ul>
+<p><img alt="a" src="https://user-images.githubusercontent.com/78825764/213727865-83d3a246-8530-4f16-80ee-d795dae82770.jpg" /></p>
+<ul>
+<li>
+<h3>Voilà ! Ici vous pouvez essayer des requete sqlite :</h3>
+</li>
+</ul>
+<p><img alt="a" src="https://user-images.githubusercontent.com/78825764/213728130-437c862d-a7be-4d7d-a4fb-714ed0aae8af.jpg" /></p>
+<h1>SELECT() :</h1>
+<h3>2.1: Selecting all columns</h3>
+<p><code>sql
+SELECT * FROM CUSTOMER;</code>
+- Voilà comment vous pouvez exécuter des requetes sur BDHub.io :</p>
+<p><img alt="a" src="https://user-images.githubusercontent.com/78825764/213730201-6fa6d9ab-a6db-46ee-b43f-ae3d69fc15c6.jpg" /></p>
+<p>To limit the number of records returned, use a LIMIT. To limit the results to just 2 records:</p>
+<p><code>sql
+SELECT * FROM CUSTOMER LIMIT 2;</code></p>
+<h3>2.2: Selecting specific columns</h3>
+<p><code>sql
+SELECT CUSTOMER_ID, NAME FROM CUSTOMER;</code></p>
+<h3>2.3: Expressions</h3>
+<p>First, select everything from <code>PRODUCT</code></p>
+<p><code>sql
+SELECT * FROM PRODUCT;</code></p>
+<p>You can use expressions by declaring a <code>TAXED_PRICE</code>. This is not a column, but rather something that is calculated every time this query is executed.</p>
+<p><code>sql
+SELECT PRODUCT_ID,
+DESCRIPTION,
+PRICE,
+PRICE * 1.07 AS TAXED_PRICE
+FROM PRODUCT;</code></p>
+<blockquote>
+<p>In SQliteStudio, you can hit CTRL + SPACE on Windows and Linux to show an autocomplete box with available fields. For Mac, you will need to enable that configuration in preferences.</p>
+</blockquote>
+<p>You can also use aliases to declare an <code>UNTAXED_PRICE</code> column off the <code>PRICE</code>, without any expression.</p>
+<p><code>sql
+SELECT PRODUCT_ID,
+DESCRIPTION,
+PRICE as UNTAXED_PRICE,
+PRICE * 1.07 AS TAXED_PRICE
+FROM PRODUCT;</code></p>
+<p><strong>SWITCH TO SLIDES</strong> FOR MATHEMATICAL OPERATORS</p>
+<h3>2.4: Using <code>round()</code> Function</h3>
+<p>```sql
+SELECT PRODUCT_ID,
+DESCRIPTION,
+PRICE,
+round(PRICE * 1.07, 2) AS TAXED_PRICE</p>
+<p>FROM PRODUCT;
+```</p>
+<h3>2.5: Text Concatenation</h3>
+<p>You can slap a dollar sign to our result using concatenation.</p>
+<p><code>sql
+SELECT PRODUCT_ID,
+DESCRIPTION,
+PRICE AS UNTAXED_PRICE,
+'$' || round(PRICE * 1.07, 2) AS TAXED_PRICE
+FROM PRODUCT;</code></p>
+<p>You can merge text via concatenation. For instance, you can concatenate two fields and put a comma and space <code>,</code> in between.</p>
+<p><code>sql
+SELECT NAME,
+CITY || ', ' || STATE AS LOCATION
+FROM CUSTOMER;</code></p>
+<p>You can concatenate several fields to create an address.</p>
+<p><code>sql
+SELECT NAME,
+STREET_ADDRESS || ' ' || CITY || ', ' || STATE || ' ' || ZIP AS SHIP_ADDRESS
+FROM CUSTOMER;</code></p>
+<p>This works with any data types, like numbers, texts, and dates. Also note that some platforms use <code>concat()</code> function instead of double pipes <code>||</code></p>
+<p><strong>SWITCH TO SLIDES</strong> FOR EXERCISE</p>
+<h2>2.6: Comments</h2>
+<p>To make a comments in SQL, use commenting dashes or blocks:</p>
+<p>```sql
+-- this is a comment</p>
+<p>/<em>
+This is a
+multiline comment
+</em>/
+```</p>
