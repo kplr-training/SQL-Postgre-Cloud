@@ -1,0 +1,76 @@
+<h1>Create Table in ElephantSQL :</h1>
+<ul>
+<li>Double cliquer sue l'instance que vous avez créer: </li>
+</ul>
+<p><img alt="a" src="https://user-images.githubusercontent.com/78825764/213692578-ef424bcc-e6a6-4ead-aed2-366041f79bd6.jpg" /></p>
+<ul>
+<li>Allez à Browser :</li>
+</ul>
+<p><img alt="a" src="https://user-images.githubusercontent.com/78825764/213692914-a90c44c4-de8e-413e-8bb2-3ca2bf84b780.jpg" /></p>
+<ul>
+<li>Et Voilà , c'est ici où on va écrire nos requetes SQL :</li>
+</ul>
+<p><img alt="a" src="https://user-images.githubusercontent.com/78825764/213693338-7905dc2c-d868-4c25-94e7-17dd8d9690c6.jpg" /></p>
+<h1>Syntaxe PostgreSQL CREATE TABLE</h1>
+<ul>
+<li>
+<p>Une base de données relationnelle se compose de plusieurs tables liées.</p>
+</li>
+<li>
+<p>Pour créer une nouvelle table, vous utilisez l'instruction CREATE TABLE</p>
+</li>
+<li>Voici une illustration de la syntaxe de base de l'instruction CREATE TABLE :</li>
+</ul>
+<p><code>CREATE TABLE [IF NOT EXISTS] table_name (
+   column1 datatype(length) column_contraint,
+   column2 datatype(length) column_contraint,
+   column3 datatype(length) column_contraint,
+   table_constraints
+);</code></p>
+<ul>
+<li>
+<p>PostgreSQL inclut les column_contraint suivantes :</p>
+</li>
+<li>
+<p><strong>NOT NULL</strong>  - garantit que les valeurs d'une colonne ne peuvent pas être NULL.</p>
+</li>
+<li><strong>UNIQUE</strong> – garantit que les valeurs d'une colonne sont uniques dans toutes les lignes d'une même table.</li>
+<li><strong>PRIMARY KEY</strong> - une colonne de clé primaire identifie de manière unique les lignes d'une table. Une table peut avoir une et une seule clé primaire. La contrainte de clé primaire permet de définir la clé primaire d'une table.</li>
+<li><strong>CHECK</strong> – une CHECKcontrainte garantit que les données doivent satisfaire une expression booléenne.</li>
+<li><strong>FOREIGN KEY</strong> - garantit que les valeurs d'une colonne ou d'un groupe de colonnes d'une table existent dans une colonne ou un groupe de colonnes d'une autre table. Contrairement à la clé primaire, une table peut avoir plusieurs clés étrangères.</li>
+</ul>
+<h1>Exemples PostgreSQL CREATE TABLE</h1>
+<ul>
+<li>Nous allons créer une nouvelle table appelée accountsqui a les colonnes suivantes :</li>
+</ul>
+<p><img alt="image" src="https://user-images.githubusercontent.com/78825764/213690535-df883203-43d6-46dc-8614-6efb727216c4.png" /></p>
+<ul>
+<li>user_id – clé primaire</li>
+<li>nom d'utilisateur - unique et non nul</li>
+<li>mot de passe - non nul</li>
+<li>email – unique et non nul</li>
+<li>created_on – non nul</li>
+<li>dernier_login – null</li>
+</ul>
+<p>L'instruction suivante crée la table accounts :
+  <code>CREATE TABLE accounts (
+    user_id serial PRIMARY KEY,
+    username VARCHAR ( 50 ) UNIQUE NOT NULL,
+    password VARCHAR ( 50 ) NOT NULL,
+    email VARCHAR ( 255 ) UNIQUE NOT NULL,
+    created_on TIMESTAMP NOT NULL,
+        last_login TIMESTAMP 
+);</code>
+- Copier et coller cette requete dans SQL Browser de ElephantSQL , puis cliquer sur execute :</p>
+<p><img alt="a" src="https://user-images.githubusercontent.com/78825764/213693917-ac80dbaf-cf0f-4552-a137-ac931e56cec2.jpg" /></p>
+<ul>
+<li>Vous pouvez vérifier que votre tableau a bien été créer sur STATS :</li>
+</ul>
+<p><img alt="a" src="https://user-images.githubusercontent.com/78825764/213694682-5206af2b-ad45-43f1-a890-ae86a20a9dd0.jpg" /></p>
+<ul>
+<li>
+<h3>A vous de jouer maintenant !</h3>
+</li>
+<li>Creer la table roles comme on a fait pour la table accounts :</li>
+</ul>
+<p><img alt="image" src="https://user-images.githubusercontent.com/78825764/213691140-adefc0bf-df48-42b4-96f8-d39249806e6e.png" /></p>
