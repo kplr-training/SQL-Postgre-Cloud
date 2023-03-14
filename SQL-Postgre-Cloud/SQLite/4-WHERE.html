@@ -1,0 +1,136 @@
+<h2>Dans cette partie nous allons travailler avec la base de données :  weather_stations.db</h2>
+<ul>
+<li>
+<h3>Sélectionner la base de donnée  weather_stations.db sur BDHub.io .</h3>
+</li>
+<li>
+<h3>Double cliquer sur weather_stations.db &gt; visualise</h3>
+</li>
+</ul>
+<p><img alt="a" src="https://user-images.githubusercontent.com/78825764/213731610-a6216cd3-60f9-407a-b320-f8ebac7ff753.jpg" /></p>
+<ul>
+<li>
+<h3>Voilà ! C'est ici où vous allez éxecuter les requetes de cette partie .</h3>
+</li>
+</ul>
+<h1>3.WHERE</h1>
+<h3>3.1: Getting year 2010 records</h3>
+<p><code>sql
+SELECT * FROM station_data
+WHERE year = 2010;</code></p>
+<h3>3.2: Getting non-2010 records</h3>
+<p><code>sql
+SELECT * FROM station_data
+WHERE year != 2010;</code></p>
+<p><code>sql
+SELECT * FROM station_data
+WHERE year &lt;&gt; 2010;</code></p>
+<h3>3.3: Getting records between 2005 and 2010</h3>
+<p><code>sql
+SELECT * FROM station_data
+WHERE year BETWEEN 2005 AND 2010</code></p>
+<h3>3.4: Using <code>AND</code></h3>
+<p><code>sql
+SELECT * FROM station_data
+WHERE year &gt;= 2005 AND year &lt;= 2010</code></p>
+<h3>3.5: Exclusive Range</h3>
+<p>This will get the years between 2005 and 2010, but exclude 2005 and 2010</p>
+<p><code>sql
+SELECT * FROM station_data
+WHERE year &gt; 2005 AND year &lt; 2010</code></p>
+<h3>3.6: Using <code>OR</code></h3>
+<p><code>sql
+SELECT * FROM station_data
+WHERE MONTH = 3
+OR MONTH = 6
+OR MONTH = 9
+OR MONTH = 12</code></p>
+<h3>3.7: Using <code>IN</code></h3>
+<p><code>sql
+SELECT * FROM station_data
+WHERE MONTH IN (3,6,9,12);</code></p>
+<h3>3.8: Using <code>NOT IN</code></h3>
+<p><code>sql
+SELECT * FROM station_data
+WHERE MONTH NOT IN (3,6,9,12);</code></p>
+<h3>3.9: Using Modulus</h3>
+<p>The modulus will perform division but return the remainder. So a remainder of 0 means the two numbers divide evenly.</p>
+<p><code>sql
+SELECT * FROM station_data
+WHERE MONTH % 3 = 0;</code></p>
+<h3>3.10: Using <code>WHERE</code> on TEXT</h3>
+<p><code>sql
+SELECT * FROM station_data
+WHERE report_code = '513A63'</code></p>
+<h3>3.11: Using <code>IN</code> with text</h3>
+<p><code>sql
+SELECT * FROM station_data
+WHERE report_code IN ('513A63','1F8A7B','EF616A')</code></p>
+<h3>3.12: Using <code>length()</code> function</h3>
+<p><code>sql
+SELECT * FROM station_data
+WHERE length(report_code) != 6</code></p>
+<h3>3.13A: Using <code>LIKE</code> for any characters</h3>
+<p><code>sql
+SELECT * FROM station_data
+WHERE report_code LIKE 'A%';</code></p>
+<h3>3.13B: Using Regular Expressions</h3>
+<p>If you are familiar with regular expressions, you can use those to identify and qualify text patterns.</p>
+<p><code>sql
+SELECT * FROM STATION_DATA
+WHERE report_code REGEXP '^A.*$'</code></p>
+<h3>3.14: Using <code>LIKE</code> for one character</h3>
+<p><code>sql
+SELECT * FROM station_data
+WHERE report_code LIKE 'B_C%';</code></p>
+<blockquote>
+<p>For <code>LIKE</code>, <code>%</code> is used in a different context than modulus <code>%</code></p>
+</blockquote>
+<h3>3.15: True Booleans 1</h3>
+<p><code>sql
+SELECT * FROM station_data
+WHERE tornado = 1 AND hail = 1;</code></p>
+<h3>3.16: True Booleans 2</h3>
+<p><code>sql
+SELECT * FROM station_data
+WHERE tornado AND hail</code></p>
+<h3>3.17: False Booleans 1</h3>
+<p><code>sql
+SELECT * FROM station_data
+WHERE tornado = 0 AND hail = 1;</code></p>
+<h3>3.18: False Booleans 2</h3>
+<p><code>sql
+SELECT * FROM station_data
+WHERE NOT tornado AND hail;</code></p>
+<h3>3.19: Handling <code>NULL</code></h3>
+<p>A <code>NULL</code> is an absent value. It is not zero, empty text ' ', or any value. It is blank.</p>
+<p>To check for a null value:</p>
+<p><code>sql
+SELECT * FROM station_data
+WHERE snow_depth IS NULL;</code></p>
+<h3>3.20: Handling <code>NULL</code> in conditions</h3>
+<p>Nulls will not qualify with any condition that doesn't explicitly handle it.</p>
+<p><code>sql
+SELECT * FROM station_data
+WHERE precipitation &lt;= 0.5;</code></p>
+<p>If you want to include nulls, do this:</p>
+<p><code>sql
+SELECT * FROM station_data
+WHERE precipitation IS NULL OR precipitation &lt;= 0.5;</code></p>
+<p>You can also use a <code>coalesce()</code> function to turn a null value into a default value, if it indeed is null.</p>
+<p>This will treat all null values as a 0.</p>
+<p><code>sql
+SELECT * FROM station_data
+WHERE coalesce(precipitation, 0) &lt;= 0.5;</code></p>
+<h3>3.21: Combining <code>AND</code> and <code>OR</code></h3>
+<p>Querying for sleet or snow</p>
+<p>Problematic. What belongs to the <code>AND</code> and what belongs to the <code>OR</code>?</p>
+<p><code>sql
+SELECT * FROM station_data
+WHERE rain = 1 AND temperature &lt;= 32
+OR snow_depth &gt; 0;</code></p>
+<p>You must group up the sleet condition in parenthesis so it is treated as one unit.</p>
+<p><code>sql
+SELECT * FROM station_data
+WHERE (rain = 1 AND temperature &lt;= 32)
+OR snow_depth &gt; 0;</code></p>
