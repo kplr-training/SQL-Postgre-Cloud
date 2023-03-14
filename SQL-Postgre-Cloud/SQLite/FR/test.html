@@ -1,0 +1,146 @@
+<h1>Déclarations CASE</h1>
+<h3>5.1 Catégorisation de la vitesse du vent</h3>
+<p>Vous pouvez utiliser une instruction <code>CASE</code> pour transformer une valeur de colonne en une autre valeur basée sur des conditions. Par exemple, nous pouvons transformer différentes plages de <code>wind_speed</code> en catégories <code>HIGH</code>, <code>MODERATE</code> et <code>LOW</code>.</p>
+<p>```SQL
+SELECT code_rapport, année, mois, jour, vitesse_vent,</p>
+<p>CAS
+   QUAND wind_speed &gt;= 40 THEN 'HIGH'
+   WHEN wind_speed &gt;= 30 THEN 'MODERATE'
+   QUAND wind_speed &gt;= 0 THEN 'LOW'
+   AUTREMENT 'N/A'
+END as wind_severity</p>
+<p>DE données_station
+ORDRE par vent_vitesse DESC ;
+```</p>
+<h3>5.2 Un moyen plus efficace de catégoriser la vitesse du vent</h3>
+<p>Nous pouvons en fait omettre <code>AND wind_speed &lt; 40</code> de l'exemple précédent car chaque <code>WHEN</code>/<code>THEN</code> est évalué de haut en bas. Le premier qu'il trouve vrai est celui avec lequel il ira et cessera d'évaluer les conditions suivantes.</p>
+<p>```SQL
+SELECT code_rapport, année, mois, jour, vitesse_vent,</p>
+<p>CAS
+   QUAND wind_speed &gt;= 40 THEN 'HIGH'
+   WHEN wind_speed &gt;= 30 THEN 'MODERATE'
+   AUTREMENT 'BAS'
+END as wind_severity</p>
+<p>DE données_station
+```</p>
+<h3>5.3 Utilisation de CASE avec GROUP BY</h3>
+<p>Nous pouvons utiliser <code>GROUP BY</code> en conjonction avec une instruction <code>CASE</code> pour découper les données de plusieurs manières, telles que l'obtention du nombre d'enregistrements par <code>wind_severity</code>.</p>
+<p>```SQL
+SÉLECTIONNER</p>
+<p>CAS
+   QUAND wind_speed &gt;= 40 THEN 'HIGH'
+   WHEN wind_speed &gt;= 30 THEN 'MODERATE'
+   QUAND wind_speed &gt;= 0 THEN 'LOW'
+   AUTREMENT 'N/A'
+END AS wind_severity,
+COUNT(*) AS record_count
+DE données_station
+GROUP BY wind_severity ;
+```</p>
+<p>De plus, certaines valeurs de wind_speed sont NULL, donc sans <code>ELSE</code>, tous les enregistrements qui ne remplissent pas une condition se révéleront NULL.</p>
+<p>```SQL
+SÉLECTIONNER</p>
+<p>CAS
+   QUAND wind_speed &gt;= 40 THEN 'HIGH'
+   WHEN wind_speed &gt;= 30 THEN 'MODERATE'
+   QUAND wind_speed &gt;= 0 THEN 'LOW'</p>
+<p>END AS wind_severity,
+COUNT(*) AS record_count
+DE données_station
+GROUP BY wind_severity ;
+```</p>
+<h3>5.4 Astuce "Zéro/Nul"</h3>
+<p>Il n'y a vraiment aucun moyen de créer plusieurs agrégations avec des conditions différentes à moins que vous ne connaissiez une astuce avec l'instruction <code>CASE</code>. Si vous souhaitez trouver deux précipitations totales, avec et sans précipitations de tornade, pour chaque année et mois, vous devez effectuer des requêtes distinctes.</p>
+<p><strong>Précipitations de tornade</strong>
+<code>SQL
+SÉLECTIONNEZ l'année, le mois,
+SUM(précipitation) as tornado_precipitation
+DE données_station
+OÙ tornade = 1
+ET année &gt;= 1990
+GROUPER PAR année, mois</code></p>
+<p><strong>Précipitations sans tornade</strong>
+<code>SQL
+SÉLECTIONNEZ l'année, le mois,
+SOMME(précipitation) as non_tornado_precipitation
+DE données_station
+OÙ tornade =0
+ET année &gt;= 1990
+GROUPER PAR année, mois</code></p>
+<p>Mais vous pouvez utiliser une seule requête à l'aide d'une instruction <code>CASE</code> qui définit une valeur sur 0 si la condition n'est pas remplie. De cette façon, cela n'aura pas d'incidence sur la somme.</p>
+<p>```SQL
+SÉLECTIONNEZ l'année, le mois,
+SUM(CASE WHEN tornado = 1 THEN précipitation ELSE 0 END) as tornado_precipitation,
+SUM(CASE WHEN tornado = 0 THEN précipitation ELSE 0 END) as non_tornado_precipitation</p>
+<p>DE données_station
+OÙ année &gt;= 1990</p>
+<p>GROUPER PAR année, mois
+```</p>
+<p>Beaucoup de gens qui ne sont pas conscients de l'astuce du cas zéro/null auront recours à des tables dérivées (non couvertes dans cette classe mais couvertes dans <em>Advanced SQL for Data Analysis</em>), ce qui ajoute une quantité inutile d'efforts et de désordre.</p>
+<p>```SQL
+SELECT t.année,
+t.mois,
+t.tornado_precipitation,
+non_t.non_tornado_precipitation</p>
+<p>DEPUIS (
+    SÉLECTIONNEZ l'année, le mois,
+    SUM(précipitation) as tornado_precipitation
+    DE données_station
+    OÙ tornade =1
+    ET année &gt;= 1990
+    GROUPER PAR année, mois
+) t</p>
+<p>JOINTURE INTERNE</p>
+<p>( SÉLECTIONNEZ l'année, le mois,
+    SOMME(précipitation) as non_tornado_precipitation
+    DE données_station
+    OÙ tornade =0
+    ET année &gt;= 1990
+    GROUPER PAR année, mois
+) non_t
+```</p>
+<h3>5.5 Utiliser Null dans un CASE pour conditionner MIN/MAX</h3>
+<p>Étant donné que <code>NULL</code> est ignoré dans SUM, MIN, MAX et d'autres fonctions d'agrégation, vous pouvez l'utiliser dans une instruction <code>CASE</code> pour contrôler conditionnellement si une valeur doit être incluse ou non dans cette agrégation.</p>
+<p>Par exemple, nous pouvons séparer les précipitations maximales lorsqu'une tornade était présente ou non.</p>
+<p><code>SQL
+SÉLECTIONNER l'année,
+MAX(CASE WHEN tornado = 0 THEN précipitation ELSE NULL END) as max_non_tornado_precipitation,
+MAX(CASE WHEN tornado = 1 THEN précipitation ELSE NULL END) as max_tornado_precipitation
+DE données_station
+OÙ année &gt;= 1990
+GROUPER PAR année</code></p>
+<ul>
+<li>Passez aux diapositives pour faire de l'exercice *</li>
+</ul>
+<h3>Exercice 5.1</h3>
+<p>SÉLECTIONNEZ le report_code, l'année, le trimestre et la température, où un "trimestre" est "Q1", "Q2", "Q3" ou "Q4" reflétant les mois 1-3, 4-6, 7-9 et 10- 12 respectivement.</p>
+<p><strong>RÉPONDRE:</strong></p>
+<p>```SQL
+SÉLECTIONNER</p>
+<p>rapport_code,
+année,</p>
+<p>CAS
+    QUAND mois ENTRE 1 et 3 ALORS 'Q1'
+    QUAND mois ENTRE 4 et 6 PUIS 'Q2'
+    QUAND mois ENTRE 7 et 9 ALORS 'Q3'
+    QUAND mois ENTRE 10 et 12 ALORS 'Q4'
+FIN comme trimestre,</p>
+<p>température</p>
+<p>DEPUIS STATION_DATA
+```</p>
+<h3>Exercice 5.2</h3>
+<p>Obtenez la température moyenne par trimestre et par mois, où un "trimestre" est "Q1", "Q2", "Q3" ou "Q4" reflétant les mois 1-3, 4-6, 7-9 et 10-12 respectivement .</p>
+<p><strong>RÉPONDRE</strong></p>
+<p>```SQL
+SÉLECTIONNER
+année,</p>
+<p>CAS
+    QUAND mois ENTRE 1 et 3 ALORS 'Q1'
+    QUAND mois ENTRE 4 et 6 PUIS 'Q2'
+    QUAND mois ENTRE 7 et 9 ALORS 'Q3'
+    QUAND mois ENTRE 10 et 12 ALORS 'Q4'
+FIN comme trimestre,</p>
+<p>AVG (température) comme avg_temp</p>
+<p>DEPUIS STATION_DATA
+GROUPER PAR 1,2
+```</p>
