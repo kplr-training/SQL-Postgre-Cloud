@@ -1,0 +1,57 @@
+<h1>VIEW - Exercice</h1>
+<ol>
+<li>Compléter le code suivant pour qu'il crée les tables <strong>Customers</strong> et <strong>Orders</strong> :</li>
+</ol>
+<p>```sql
+-- Créer la table Customers
+CREATE TABLE Customers (
+-- Remplir ici
+);</p>
+<p>-- Insérer les données dans la table Customers
+INSERT INTO Customers (id, name, email, city) VALUES
+(1, 'John', 'john@gmail.com', 'New York'),
+(2, 'Sara', 'sara@gmail.com', 'Paris'),
+-- Remplir ici
+;</p>
+<p>-- Créer la table Orders
+CREATE TABLE Orders (
+-- Remplir ici
+);</p>
+<p>-- Insérer les données dans la table Orders
+INSERT 
+-- Remplir ici
+;
+```</p>
+<p>Customers : 
+| id | name | email | city |
+| --- | --- | --- | --- |
+| 1 | John | <a href="&#109;&#97;&#105;&#108;&#116;&#111;&#58;&#106;&#111;&#104;&#110;&#64;&#103;&#109;&#97;&#105;&#108;&#46;&#99;&#111;&#109;">&#106;&#111;&#104;&#110;&#64;&#103;&#109;&#97;&#105;&#108;&#46;&#99;&#111;&#109;</a> | New York |
+| 2 | Sara | <a href="&#109;&#97;&#105;&#108;&#116;&#111;&#58;&#115;&#97;&#114;&#97;&#64;&#103;&#109;&#97;&#105;&#108;&#46;&#99;&#111;&#109;">&#115;&#97;&#114;&#97;&#64;&#103;&#109;&#97;&#105;&#108;&#46;&#99;&#111;&#109;</a> | Paris |
+| 3 | Mark | <a href="&#109;&#97;&#105;&#108;&#116;&#111;&#58;&#109;&#97;&#114;&#107;&#64;&#103;&#109;&#97;&#105;&#108;&#46;&#99;&#111;&#109;">&#109;&#97;&#114;&#107;&#64;&#103;&#109;&#97;&#105;&#108;&#46;&#99;&#111;&#109;</a> | London |
+| 4 | Jane | <a href="&#109;&#97;&#105;&#108;&#116;&#111;&#58;&#106;&#97;&#110;&#101;&#64;&#103;&#109;&#97;&#105;&#108;&#46;&#99;&#111;&#109;">&#106;&#97;&#110;&#101;&#64;&#103;&#109;&#97;&#105;&#108;&#46;&#99;&#111;&#109;</a> | Berlin |
+| 5 | Mike | <a href="&#109;&#97;&#105;&#108;&#116;&#111;&#58;&#109;&#105;&#107;&#101;&#64;&#103;&#109;&#97;&#105;&#108;&#46;&#99;&#111;&#109;">&#109;&#105;&#107;&#101;&#64;&#103;&#109;&#97;&#105;&#108;&#46;&#99;&#111;&#109;</a> | Madrid |</p>
+<p>Orders :
+| id | customer_id | product | price |
+| --- | --- | --- | --- |
+| 1 | 1 | TV | 1000 |
+| 2 | 2 | Phone | 500 |
+| 3 | 1 | Headset | 100 |
+| 4 | 3 | Computer | 1500 |
+| 5 | 2 | Headset | 50 |
+| 6 | 1 | Phone | 800 |
+| 7 | 4 | Computer | 2000 |
+| 8 | 5 | TV | 1200 |
+| 9 | 1 | Camera | 600 |</p>
+<p>Enregistrer le code dans un fichier portant l'extension .sql et exécutez-le dans ElephantSQL pour créer la base de données exoview, créer les tables et insérer les données.</p>
+<ol>
+<li>Créez une vue appelée <strong>CustomerOrders</strong> qui affiche le nom, l'adresse électronique, la ville et le nombre de commandes de chaque client. (Indice : utiliser left join)</li>
+<li>Récupérer toutes les lignes de la vue <strong>CustomerOrders</strong>.</li>
+<li>Créez une vue appelée <strong>HighSpendingCustomers</strong> qui affiche le nom, l'adresse électronique et le montant total dépensé pour chaque client ayant dépensé plus de 1000 $.</li>
+<li>Récupérer toutes les lignes de la vue <strong>HighSpendingCustomers</strong>.</li>
+<li>Créez une vue appelée <strong>TopSellingProducts</strong> qui affiche le produit et le nombre de fois où il a été vendu, trié par ordre décroissant du nombre de fois où chaque produit a été vendu.</li>
+<li>Récupérer toutes les lignes de la vue <strong>TopSellingProducts</strong>.</li>
+<li>Créez une vue appelée <strong>OrdersByCity</strong> qui affiche la ville et le nombre de commandes passées par les clients de cette ville. (indice : utiliser left join)</li>
+<li>Récupérer toutes les lignes de la vue <strong>OrdersByCity</strong>.</li>
+<li>Créez une vue appelée <strong>AverageOrderValue</strong> qui affiche la valeur moyenne des commandes pour chaque client.</li>
+<li>Récupérer toutes les lignes de la vue <strong>AverageOrderValue</strong>.</li>
+</ol>
